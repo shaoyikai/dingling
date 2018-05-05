@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-04-23T16:04:40
+# Project created by QtCreator 2018-05-05T19:51:19
 #
 #-------------------------------------------------
 
@@ -32,3 +32,6 @@ HEADERS += \
 
 FORMS += \
         dingling.ui
+
+DISTFILES += \
+    README.md

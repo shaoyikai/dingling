@@ -1,13 +1,13 @@
 #ifndef DINGLING_H
 #define DINGLING_H
 
-#include <QMainWindow>
+#include <QDialog>
 
 namespace Ui {
 class DingLing;
 }
 
-class DingLing : public QMainWindow
+class DingLing : public QDialog
 {
     Q_OBJECT
 

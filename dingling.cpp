@@ -2,7 +2,7 @@
 #include "ui_dingling.h"
 
 DingLing::DingLing(QWidget *parent) :
-    QMainWindow(parent),
+    QDialog(parent),
     ui(new Ui::DingLing)
 {
     ui->setupUi(this);
