@@ -1,10 +1,11 @@
-#include "dingling.h"
+#include "login.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    DingLing w;
+
+    Login w;
     w.show();
 
     return a.exec();
