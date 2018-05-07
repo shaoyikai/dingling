@@ -45,7 +45,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="le_account"/>
+      <widget class="QLineEdit" name="le_account">
+       <property name="placeholderText">
+        <string>请输入账号</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -59,7 +63,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="le_password"/>
+      <widget class="QLineEdit" name="le_password">
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
+       </property>
+       <property name="placeholderText">
+        <string>请输入密码</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
