@@ -8,7 +8,6 @@
 #include "QTextStream"
 
 #include <QSqlDatabase>
-#include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlQuery>
 
@@ -20,8 +19,6 @@ Login::Login(QWidget *parent) :
 
     // -- DATABASE INIT --
     DatabaseConnect();
-    DatabaseInit();
-    DatabasePopulate();
 }
 
 Login::~Login()
@@ -38,7 +35,7 @@ void Login::on_btn_submit_clicked()
         QMessageBox::critical(this,"错误","信息填写不完整，请重新检查","确定");
     }else{
         QString cnt = account + " " + password + "\n";
-        writeToFile(cnt);
+        writeToDb(account,password);
     }
 }
 
@@ -47,59 +44,55 @@ void Login::on_btn_clear_clicked()
     ui->le_account->setText("");
     ui->le_password->setText("");
     this->ui->le_account->setFocus();
+    Login::readFromDb();
 }
 
-void Login::writeToFile(QString cnt)
+void Login::writeToDb(QString account,QString password)
 {
-    QFile file("./aaaaa.txt");
-    if(!file.open(QIODevice::Append | QIODevice::Text))
-    {
-        QMessageBox::critical(this,"错误","文件打开失败，信息未保存！","确认");
-        return;
+    QSqlQuery query;
+    QString insert_sql = "INSERT INTO user(account,password) VALUES('" + account + "','" + password + "')";
+    if(!query.exec(insert_sql)){
+        qWarning() << "Login::writeToDb - ERROR: " << query.lastError().text();
     }
+}
 
-    QTextStream out(&file);
-    out << cnt;
-    file.close();
+void Login::readFromDb()
+{
+    QSqlQuery query;
+    QString select_sql = "SELECT * FROM user";
+    if(!query.exec(select_sql)) {
+        qWarning() << "Login::readFromDb - ERROR: " << query.lastError().text();
+    } else {
+        while(query.next()) {
+            QString account = query.value(1).toString();
+            QString password = query.value(2).toString();
+            qDebug()<<QString("account:%1    password:%2").arg(account).arg(password);
+        }
+    }
 }
 
 
 void Login::DatabaseConnect()
 {
     const QString DRIVER("QSQLITE");
-    if(QSqlDatabase::isDriverAvailable(DRIVER))
-    {
+    if(QSqlDatabase::isDriverAvailable(DRIVER)){
         QSqlDatabase db = QSqlDatabase::addDatabase(DRIVER);
 
-        db.setDatabaseName("memory.db");
+        db.setDatabaseName("data.db");
 
-        if(!db.open())
-            qWarning() << "MainWindow::DatabaseConnect - ERROR: " << db.lastError().text();
+        if(!db.open()){
+            qWarning() << "Login::DatabaseConnect - ERROR: " << db.lastError().text();
+        }
+    }else{
+        qWarning() << "Login::DatabaseConnect - ERROR: no driver " << DRIVER << " available";
     }
-    else
-        qWarning() << "MainWindow::DatabaseConnect - ERROR: no driver " << DRIVER << " available";
 
+    // 创建user表
+    QSqlQuery query("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, account TEXT, password TEXT)");
+    if(!query.isActive()){
+        qWarning() << "Login::DatabaseConnect - ERROR: " << query.lastError().text();
+    }
 }
-
-void Login::DatabaseInit()
-{
-    QSqlQuery query("CREATE TABLE people (id INTEGER PRIMARY KEY, name TEXT)");
-
-    if(!query.isActive())
-        qWarning() << "Login::DatabaseInit - ERROR: " << query.lastError().text();
-
-}
-
-void Login::DatabasePopulate()
-{
-    QSqlQuery query;
-
-    if(!query.exec("INSERT INTO people(name) VALUES('Eddie Guerrero')"))
-        qWarning() << "Login::DatabasePopulate - ERROR: " << query.lastError().text();
-    if(!query.exec("INSERT INTO people(name) VALUES('Gordon Ramsay')"))
-        qWarning() << "Login::DatabasePopulate - ERROR: " << query.lastError().text();
-}
-
 
 
 
