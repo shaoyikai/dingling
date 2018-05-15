@@ -14,8 +14,8 @@ class Login : public QDialog
 public:
     explicit Login(QWidget *parent = 0);
     ~Login();
+    int validLogin(QString account,QString password);
     void writeToDb(QString account,QString password);
-    void readFromDb();
     // 数据库操作
     void DatabaseConnect();
 
